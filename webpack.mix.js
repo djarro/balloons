@@ -1,3 +1,3 @@
 const mix = require('laravel-mix');
 
-mix.js('js/app.js', '/');
+mix.js('js/index.js', '/');

@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 // objects
-import Balloon from './Balloon'
-import Floor from './Floor';
+import Balloon_old from './Balloon'
+import Floor_old from './Floor';
 
 
 // SCENE
@@ -44,20 +44,20 @@ for (let i = 0; i < 3; i++) {
     cubeCams.push(cubeCamera);
 
     const size = 10;
-    const balloon = new Balloon(
+    const balloon = new Balloon_old(
         size,
         'pink',
         (i * 30) + (size / 2),
         Math.random() * 20,
         0,
-        cubeCamera
+        cubeCams[i]
     ).render();
 
     scene.add(balloon)
 }
 
 // FLOOR
-scene.add(new Floor().render());
+scene.add(new Floor_old().render());
 
 // RENDER
 const renderer = new THREE.WebGLRenderer({ antialias: true });

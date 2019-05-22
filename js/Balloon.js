@@ -1,100 +1,70 @@
-import * as THREE from 'three';
+import {
+  Object3D,
+  SphereGeometry,
+  Mesh,
+  MeshPhongMaterial,
+  ConeGeometry,
+  CubeCamera,
+} from 'three';
 
-/**
- * Create a balloon group mesh
- * @class Balloon
- *
- * @example
- *
- * const balloon = new Balloon(
- *   10,
- *   'pink',
- *   0,
- *   0,
- *   0
- * ).render()
- */
+export default class Balloon extends Object3D {
+  constructor(props) {
+    super(props);
 
-export default class Balloon {
+    this.config = props;
+    this.camera = new CubeCamera(0, 1000, 512);
+    this.camera.position.z = 10;
+    this.add(this.camera);
+    // this.material = new MeshPhongMaterial({ color: 'white' });
+    this.material = new MeshPhongMaterial({
+      shininess: 10,
+      color: 'red',
+      specular: 0xffffff,
+      envMap: this.camera.renderTarget.texture,
+    });
 
-    /**
-     * Balloon constructor
-     * @param {number} size
-     * @param {string} color
-     * @param {number} x position
-     * @param {number} y position
-     * @param {number} z position
-     * @param {cubeCamera} Cube Camera
-     */
-    constructor(size, color, x, y, z, cubeCamera) {
-        this.size = size;
-        this.color = color;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.scale = 1.4;
-        this.camera = cubeCamera;
-        this.material = new THREE.MeshPhongMaterial({
-            shininess: 10,
-            color: this.color,
-            specular: 0xffffff,
-            envMap: this.camera.renderTarget.texture
-        });
-        // this.material = new THREE.MeshStandardMaterial({color: this.color, roughness: 0});
-        // this.material = new THREE.MeshPhongMaterial({ color: this.color });
-    }
+    this.create();
+  }
 
-    /**
-     * Create oval mesh
-     * @returns {THREE.Mesh}
-     */
-    oval() {
-        const geometry = new THREE.SphereGeometry(
-            this.size,
-            32,
-            32
-        );
+  create() {
+    const oval = this.oval();
+    const cone = this.cone();
 
-        const oval = new THREE.Mesh(geometry, this.material);
-        oval.position.set(this.x, this.y, this.z);
-        oval.castShadow = true;
-        oval.receiveShadow = true;
-        oval.scale.y = this.scale;
+    this.add(oval);
+    this.add(cone);
 
-        return oval;
-    }
+  }
 
-    /**
-     * Create cone mesh
-     * @returns {THREE.Mesh}
-     */
-    cone() {
-        const geometry = new THREE.ConeGeometry(this.size / 4, this.size / 3, 32);
+  oval() {
+    const { size, x, y, z, stretch } = this.config;
+    const geometry = new SphereGeometry(
+      size,
+      32,
+      32,
+    );
 
-        const cone = new THREE.Mesh(geometry, this.material);
-        cone.position.set(this.x, this.y + -(this.size * this.scale), this.z);
-        cone.castShadow = true;
-        cone.receiveShadow = true;
+    const oval = new Mesh(geometry, this.material);
+    oval.position.set(x, y, z);
+    oval.castShadow = true;
+    oval.receiveShadow = true;
+    oval.scale.z = stretch;
 
-        return cone
-    }
+    return oval;
+  }
 
-    /**
-     * Render a Balloon
-     * @returns {THREE.Group}
-     */
-    render() {
-        const balloon = new THREE.Group();
+  cone() {
+    const { size, x, y, z, stretch } = this.config;
+    const radius = size / 4;
+    const height = size / 3;
 
-        const oval = this.oval();
-        const cone = this.cone();
+    const geometry = new ConeGeometry(radius, height, 32);
 
-        balloon.add(oval);
-        balloon.add(cone);
-        balloon.add(this.camera);
+    const cone = new Mesh(geometry, this.material);
+    cone.position.set(0, 0,  z - stretch);
+    cone.rotation.x = Math.PI / 2;
+    cone.castShadow = true;
+    cone.receiveShadow = true;
 
-        console.log(this.camera)
-
-        return balloon;
-    }
+    return cone;
+  }
 }

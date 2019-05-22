@@ -1,13 +1,15 @@
-import * as THREE from 'three';
+import {Object3D, MeshBasicMaterial, Mesh, PlaneBufferGeometry} from 'three';
 
-export default class Floor {
-    render() {
-        var material = new THREE.MeshBasicMaterial({ color: 'grey' });
-        var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 20000, 20000 ), material );
-        mesh.position.y = -20;
-        mesh.rotation.x = - Math.PI / 2;
-        mesh.receiveShadow = true;
+export default class Floor extends Object3D {
+  constructor(props) {
+    super(props);
 
-        return mesh;
-    }
+    const material = new MeshBasicMaterial({ color: 'lightgrey' });
+    this.plane = new Mesh(new PlaneBufferGeometry(100, 100), material);
+    this.plane.position.x = 0;
+    this.plane.position.y = 0;
+    this.plane.receiveShadow = true;
+
+    this.add(this.plane);
+  }
 }
