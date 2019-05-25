@@ -12,14 +12,15 @@ export default class Balloon extends Object3D {
     super(props);
 
     this.config = props;
+
     this.camera = new CubeCamera(0, 1000, 512);
-    this.camera.position.z = 10;
-    this.add(this.camera);
-    // this.material = new MeshPhongMaterial({ color: 'white' });
+    this.camera.position.z = 0;
+    this.camera.updateMatrixWorld();
+
     this.material = new MeshPhongMaterial({
       shininess: 10,
-      color: 'red',
       specular: 0xffffff,
+      color: '#' + parseInt(Math.random() * 0xffffff).toString(16),
       envMap: this.camera.renderTarget.texture,
     });
 
@@ -32,11 +33,10 @@ export default class Balloon extends Object3D {
 
     this.add(oval);
     this.add(cone);
-
   }
 
   oval() {
-    const { size, x, y, z, stretch } = this.config;
+    const {size, x, y, z, stretch} = this.config;
     const geometry = new SphereGeometry(
       size,
       32,
@@ -53,14 +53,14 @@ export default class Balloon extends Object3D {
   }
 
   cone() {
-    const { size, x, y, z, stretch } = this.config;
+    const {size, x, z, stretch} = this.config;
     const radius = size / 4;
     const height = size / 3;
 
     const geometry = new ConeGeometry(radius, height, 32);
 
     const cone = new Mesh(geometry, this.material);
-    cone.position.set(0, 0,  z - stretch);
+    cone.position.set(x, 0, z - stretch);
     cone.rotation.x = Math.PI / 2;
     cone.castShadow = true;
     cone.receiveShadow = true;
